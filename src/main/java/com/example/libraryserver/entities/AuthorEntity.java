@@ -1,4 +1,4 @@
-package com.example.library.entities;
+package com.example.libraryserver.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,6 +24,6 @@ public class AuthorEntity {
     @Column(columnDefinition = "text")
     private String info;
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    private List<com.example.library.entities.BookEntity> books = new ArrayList<>();
+    private List<BookEntity> books = new ArrayList<>();
 
 }

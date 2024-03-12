@@ -1,4 +1,4 @@
-package com.example.library.entities;
+package com.example.libraryserver.entities;
 
 
 import jakarta.persistence.*;
@@ -25,6 +25,6 @@ public class LoanEntity {
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinColumn
-    private com.example.library.entities.BookEntity book;
+    private BookEntity book;
 
 }
