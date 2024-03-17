@@ -17,12 +17,21 @@ import java.util.List;
 @Table(name = "authors")
 public class AuthorEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(
+            name = "author_sequence",
+            sequenceName = "author_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "author_sequence"
+    )
     private Long id;
     private String name;
     private String surname;
     @Column(columnDefinition = "text")
     private String info;
+
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     private List<BookEntity> books = new ArrayList<>();
 

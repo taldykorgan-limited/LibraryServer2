@@ -15,13 +15,22 @@ import java.util.List;
 @Table(name = "users")
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(
+            name = "user_sequence",
+            sequenceName = "user_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "user_sequence"
+    )
     private Long id;
     private String login;
     private String password;
     private String name;
     private String surname;
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    private List<BookEntity> books = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "user")
+    private List<LoanEntity> loans = new ArrayList<>();
 
 }

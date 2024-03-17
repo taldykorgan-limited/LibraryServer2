@@ -15,16 +15,27 @@ import java.util.List;
 @Table(name = "books")
 public class BookEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(
+            name = "book_sequence",
+            sequenceName = "book_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "book_sequence"
+    )
     private Long id;
     private String title;
     @Column(columnDefinition = "text")
     private String description;
     private int quantity;
+
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "books")
     private List<AuthorEntity> authors;
+
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "book")
     private List<LoanEntity> loans = new ArrayList<>();
+
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "books")
     private List<GenreEntity> genres = new ArrayList<>();
 
