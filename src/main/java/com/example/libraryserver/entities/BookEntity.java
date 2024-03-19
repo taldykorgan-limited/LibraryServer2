@@ -34,10 +34,10 @@ public class BookEntity {
     private List<AuthorEntity> authors;
 
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "book")
-    private List<LoanEntity> loans = new ArrayList<>();
+    private List<LoanEntity> loans;
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "books")
-    private List<GenreEntity> genres = new ArrayList<>();
+    private List<GenreEntity> genres;
 
 
 

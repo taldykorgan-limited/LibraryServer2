@@ -32,5 +32,5 @@ public class GenreEntity {
     private String info;
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    private List<BookEntity> books = new ArrayList<>();
+    private List<BookEntity> books;
 }
