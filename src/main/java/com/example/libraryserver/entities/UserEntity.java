@@ -31,6 +31,6 @@ public class UserEntity {
     private String surname;
 
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "user")
-    private List<LoanEntity> loans = new ArrayList<>();
+    private List<LoanEntity> loans;
 
 }
