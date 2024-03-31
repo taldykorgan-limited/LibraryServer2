@@ -4,24 +4,51 @@ import com.example.libraryserver.entities.BookEntity;
 import com.example.libraryserver.repositories.BookRepository;
 import com.example.libraryserver.requests.books.ChangeBookRequest;
 import com.example.libraryserver.requests.books.CreateBookRequest;
+import com.example.libraryserver.responses.books.GetBookResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
 
-    public BookEntity getBookById(Long id) {
-        return bookRepository.findBookEntityById(id)
-                .orElseThrow(() -> new NoSuchElementException("Book with id " + id + " not found."));
+    public GetBookResponse getBookById(Long id) {
+        BookEntity bookEntity = bookRepository.findBookEntityById(id)
+                .orElseThrow(() -> new NoSuchElementException("Book with id " + id + " not found"));
+
+        return GetBookResponse.builder()
+                .id(bookEntity.getId())
+                .title(bookEntity.getTitle())
+                .quantity(bookEntity.getQuantity())
+                .authors(bookEntity.getAuthors())
+                .description(bookEntity.getDescription())
+                .genres(bookEntity.getGenres())
+                .build();
     }
 
-    public List<BookEntity> getAllBooks() {
-        return bookRepository.findAll();
+    public List<GetBookResponse> getAllBooks() {
+        List<BookEntity> bookEntityList = bookRepository.findAll();
+        if (!bookEntityList.isEmpty()){
+            List<GetBookResponse> getBookResponseList = bookEntityList.stream()
+                    .map(bookEntity -> GetBookResponse.builder()
+                            .id(bookEntity.getId())
+                            .title(bookEntity.getTitle())
+                            .quantity(bookEntity.getQuantity())
+                            .authors(bookEntity.getAuthors())
+                            .description(bookEntity.getDescription())
+                            .genres(bookEntity.getGenres())
+                            .build())
+                    .toList();
+            return getBookResponseList;
+        }
+        else {
+            throw new NoSuchElementException("Books not found");
+        }
     }
 
     public String createBook(CreateBookRequest createBookRequest) {
