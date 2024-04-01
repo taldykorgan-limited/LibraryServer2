@@ -5,6 +5,7 @@ import com.example.libraryserver.repositories.BookRepository;
 import com.example.libraryserver.requests.books.ChangeBookRequest;
 import com.example.libraryserver.requests.books.CreateBookRequest;
 import com.example.libraryserver.responses.books.GetBookResponse;
+import com.example.libraryserver.responses.books.GetBooksResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class BookService {
         BookEntity bookEntity = bookRepository.findBookEntityById(id)
                 .orElseThrow(() -> new NoSuchElementException("Book with id " + id + " not found"));
 
-        return GetBookResponse.builder()
+        GetBookResponse getBookResponse = GetBookResponse.builder()
                 .id(bookEntity.getId())
                 .title(bookEntity.getTitle())
                 .quantity(bookEntity.getQuantity())
@@ -29,9 +30,10 @@ public class BookService {
                 .description(bookEntity.getDescription())
                 .genres(bookEntity.getGenres())
                 .build();
+        return getBookResponse;
     }
 
-    public List<GetBookResponse> getAllBooks() {
+    public GetBooksResponse getAllBooks() {
         List<BookEntity> bookEntityList = bookRepository.findAll();
         if (!bookEntityList.isEmpty()){
             List<GetBookResponse> getBookResponseList = bookEntityList.stream()
@@ -44,7 +46,7 @@ public class BookService {
                             .genres(bookEntity.getGenres())
                             .build())
                     .toList();
-            return getBookResponseList;
+            return new GetBooksResponse(getBookResponseList);
         }
         else {
             throw new NoSuchElementException("Books not found");
@@ -72,12 +74,12 @@ public class BookService {
         bookEntity.setAuthors(changeBookRequest.getAuthors());
         bookEntity.setGenres(changeBookRequest.getGenres());
         bookRepository.save(bookEntity);
-        return "Book with id " + changeBookRequest.getId() + "changed.";
+        return "Book with id " + changeBookRequest.getId() + " changed.";
     }
 
     public String deleteBook(Long id){
         bookRepository.deleteById(id);
-        return "Book with id " + id + "has been deleted.";
+        return "Book with id " + id + " has been deleted.";
     }
 
 

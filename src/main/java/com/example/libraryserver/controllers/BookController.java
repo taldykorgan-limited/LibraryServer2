@@ -4,6 +4,7 @@ import com.example.libraryserver.entities.BookEntity;
 import com.example.libraryserver.requests.books.ChangeBookRequest;
 import com.example.libraryserver.requests.books.CreateBookRequest;
 import com.example.libraryserver.responses.books.GetBookResponse;
+import com.example.libraryserver.responses.books.GetBooksResponse;
 import com.example.libraryserver.services.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class BookController {
     }
 
     @GetMapping("/get")
-    public List<GetBookResponse> getBooks(){
+    public GetBooksResponse getBooks(){
         return bookService.getAllBooks();
     }
 
