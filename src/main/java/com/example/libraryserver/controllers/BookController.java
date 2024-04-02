@@ -1,8 +1,7 @@
 package com.example.libraryserver.controllers;
 
-import com.example.libraryserver.entities.BookEntity;
-import com.example.libraryserver.requests.books.ChangeBookRequest;
 import com.example.libraryserver.requests.books.CreateBookRequest;
+import com.example.libraryserver.requests.books.UpdateBookRequest;
 import com.example.libraryserver.responses.books.GetBookResponse;
 import com.example.libraryserver.responses.books.GetBooksResponse;
 import com.example.libraryserver.services.BookService;
@@ -33,9 +32,9 @@ public class BookController {
         return bookService.getBookById(id);
     }
 
-    @PatchMapping("/change")
-    public String changeAuthors(@RequestBody ChangeBookRequest changeBookRequest){
-        return bookService.changeBook(changeBookRequest);
+    @PatchMapping("/update")
+    public String updateBook(@RequestBody UpdateBookRequest changeBookRequest){
+        return bookService.updateBook(changeBookRequest);
     }
 
     @DeleteMapping("/delete/{id}")

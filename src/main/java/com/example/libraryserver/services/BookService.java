@@ -2,8 +2,8 @@ package com.example.libraryserver.services;
 
 import com.example.libraryserver.entities.BookEntity;
 import com.example.libraryserver.repositories.BookRepository;
-import com.example.libraryserver.requests.books.ChangeBookRequest;
 import com.example.libraryserver.requests.books.CreateBookRequest;
+import com.example.libraryserver.requests.books.UpdateBookRequest;
 import com.example.libraryserver.responses.books.GetBookResponse;
 import com.example.libraryserver.responses.books.GetBooksResponse;
 import lombok.RequiredArgsConstructor;
@@ -65,16 +65,16 @@ public class BookService {
         return "Book created: " + bookEntity;
     }
 
-    public String changeBook(ChangeBookRequest changeBookRequest) {
-        BookEntity bookEntity = bookRepository.findBookEntityById(changeBookRequest.getId())
-                .orElseThrow(() -> new NoSuchElementException("Book with id " + changeBookRequest.getId() + " not found"));
-        bookEntity.setTitle(changeBookRequest.getTitle());
-        bookEntity.setQuantity(changeBookRequest.getQuantity());
-        bookEntity.setDescription(changeBookRequest.getDescription());
-        bookEntity.setAuthors(changeBookRequest.getAuthors());
-        bookEntity.setGenres(changeBookRequest.getGenres());
+    public String updateBook(UpdateBookRequest updateBookRequest) {
+        BookEntity bookEntity = bookRepository.findBookEntityById(updateBookRequest.getId())
+                .orElseThrow(() -> new NoSuchElementException("Book with id " + updateBookRequest.getId() + " not found"));
+        bookEntity.setTitle(updateBookRequest.getTitle());
+        bookEntity.setQuantity(updateBookRequest.getQuantity());
+        bookEntity.setDescription(updateBookRequest.getDescription());
+        bookEntity.setAuthors(updateBookRequest.getAuthors());
+        bookEntity.setGenres(updateBookRequest.getGenres());
         bookRepository.save(bookEntity);
-        return "Book with id " + changeBookRequest.getId() + " changed.";
+        return "Book with id " + updateBookRequest.getId() + " updated.";
     }
 
     public String deleteBook(Long id){
