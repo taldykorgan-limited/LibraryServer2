@@ -1,10 +1,10 @@
 package com.example.libraryserver.controllers;
 
-import com.example.libraryserver.entities.BookEntity;
-import com.example.libraryserver.requests.books.ChangeBookRequest;
 import com.example.libraryserver.requests.books.CreateBookRequest;
+import com.example.libraryserver.requests.books.UpdateBookRequest;
 import com.example.libraryserver.responses.books.GetBookResponse;
 import com.example.libraryserver.responses.books.GetBooksResponse;
+import com.example.libraryserver.responses.general.InfoResponse;
 import com.example.libraryserver.services.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,7 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping("/create")
-    public String createBook(@RequestBody CreateBookRequest createBookRequest){
+    public InfoResponse createBook(@RequestBody CreateBookRequest createBookRequest){
         return bookService.createBook(createBookRequest);
     }
 
@@ -33,13 +33,13 @@ public class BookController {
         return bookService.getBookById(id);
     }
 
-    @PatchMapping("/change")
-    public String changeAuthors(@RequestBody ChangeBookRequest changeBookRequest){
-        return bookService.changeBook(changeBookRequest);
+    @PatchMapping("/update")
+    public InfoResponse updateBook(@RequestBody UpdateBookRequest changeBookRequest){
+        return bookService.updateBook(changeBookRequest);
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteBook(@PathVariable("id") Long id){
+    public InfoResponse deleteBook(@PathVariable("id") Long id){
         return bookService.deleteBook(id);
     }
 
