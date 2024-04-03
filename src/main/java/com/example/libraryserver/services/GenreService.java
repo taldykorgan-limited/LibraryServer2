@@ -4,6 +4,7 @@ import com.example.libraryserver.entities.GenreEntity;
 import com.example.libraryserver.repositories.GenreRepository;
 import com.example.libraryserver.requests.genres.CreateGenreRequest;
 import com.example.libraryserver.requests.genres.UpdateGenreRequest;
+import com.example.libraryserver.responses.general.InfoResponse;
 import com.example.libraryserver.responses.genres.GetGenreResponse;
 import com.example.libraryserver.responses.genres.GetGenresResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +20,13 @@ public class GenreService {
     private final GenreRepository genreRepository;
 
 
-    public String createGenre(CreateGenreRequest createGenreRequest) {
+    public InfoResponse createGenre(CreateGenreRequest createGenreRequest) {
         GenreEntity genreEntity = GenreEntity.builder()
                 .name(createGenreRequest.getName())
                 .info(createGenreRequest.getInfo())
                 .build();
         genreRepository.save(genreEntity);
-        return "Genre created: " + createGenreRequest.getName();
+        return new InfoResponse("Genre created: " + createGenreRequest.getName());
     }
 
     public GetGenreResponse getGenreByIdBrief(Long id) {
@@ -76,7 +77,7 @@ public class GenreService {
         return new GetGenresResponse(getGenreResponseList);
     }
 
-    public String updateGenre(UpdateGenreRequest updateGenreRequest) {
+    public InfoResponse updateGenre(UpdateGenreRequest updateGenreRequest) {
         GenreEntity genreEntity = genreRepository.findById(updateGenreRequest.getId())
                 .orElseThrow(() -> new NoSuchElementException("Genre with id " + updateGenreRequest.getId() + " not found"));
 
@@ -85,12 +86,12 @@ public class GenreService {
         genreEntity.setBooks(updateGenreRequest.getBooks());
         genreRepository.save(genreEntity);
 
-        return "Genre with id " + updateGenreRequest.getId() + " has been updated.";
+        return new InfoResponse("Genre with id " + updateGenreRequest.getId() + " has been updated.");
     }
 
-    public String deleteGenre(Long id) {
+    public InfoResponse deleteGenre(Long id) {
         genreRepository.deleteById(id);
-        return "Genre with id " + id + " has been deleted.";
+        return new InfoResponse("Genre with id " + id + " has been deleted.");
     }
 
 

@@ -2,6 +2,7 @@ package com.example.libraryserver.controllers;
 
 import com.example.libraryserver.requests.genres.CreateGenreRequest;
 import com.example.libraryserver.requests.genres.UpdateGenreRequest;
+import com.example.libraryserver.responses.general.InfoResponse;
 import com.example.libraryserver.responses.genres.GetGenreResponse;
 import com.example.libraryserver.responses.genres.GetGenresResponse;
 import com.example.libraryserver.services.GenreService;
@@ -17,7 +18,7 @@ public class GenreController {
 
 
     @PostMapping("/create")
-    public String createGenre(@RequestBody CreateGenreRequest createGenreRequest) {
+    public InfoResponse createGenre(@RequestBody CreateGenreRequest createGenreRequest) {
         return genreService.createGenre(createGenreRequest);
     }
 
@@ -42,12 +43,12 @@ public class GenreController {
     }
 
     @PatchMapping("/update")
-    public String updateGenre(@RequestBody UpdateGenreRequest updateGenreRequest) {
+    public InfoResponse updateGenre(@RequestBody UpdateGenreRequest updateGenreRequest) {
         return genreService.updateGenre(updateGenreRequest);
     }
 
     @DeleteMapping("/delete")
-    public String deleteGenre(Long id) {
+    public InfoResponse deleteGenre(Long id) {
         return genreService.deleteGenre(id);
     }
 

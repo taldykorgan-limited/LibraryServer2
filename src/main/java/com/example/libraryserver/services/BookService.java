@@ -6,6 +6,7 @@ import com.example.libraryserver.requests.books.CreateBookRequest;
 import com.example.libraryserver.requests.books.UpdateBookRequest;
 import com.example.libraryserver.responses.books.GetBookResponse;
 import com.example.libraryserver.responses.books.GetBooksResponse;
+import com.example.libraryserver.responses.general.InfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +54,7 @@ public class BookService {
         }
     }
 
-    public String createBook(CreateBookRequest createBookRequest) {
+    public InfoResponse createBook(CreateBookRequest createBookRequest) {
         BookEntity bookEntity = BookEntity.builder()
                 .title(createBookRequest.getTitle())
                 .description(createBookRequest.getDescription())
@@ -62,10 +63,10 @@ public class BookService {
                 .genres(createBookRequest.getGenres())
                 .build();
         bookRepository.save(bookEntity);
-        return "Book created: " + bookEntity;
+        return new InfoResponse("Book created: " + bookEntity);
     }
 
-    public String updateBook(UpdateBookRequest updateBookRequest) {
+    public InfoResponse updateBook(UpdateBookRequest updateBookRequest) {
         BookEntity bookEntity = bookRepository.findBookEntityById(updateBookRequest.getId())
                 .orElseThrow(() -> new NoSuchElementException("Book with id " + updateBookRequest.getId() + " not found"));
         bookEntity.setTitle(updateBookRequest.getTitle());
@@ -74,12 +75,12 @@ public class BookService {
         bookEntity.setAuthors(updateBookRequest.getAuthors());
         bookEntity.setGenres(updateBookRequest.getGenres());
         bookRepository.save(bookEntity);
-        return "Book with id " + updateBookRequest.getId() + " updated.";
+        return new InfoResponse("Book with id " + updateBookRequest.getId() + " updated.");
     }
 
-    public String deleteBook(Long id){
+    public InfoResponse deleteBook(Long id){
         bookRepository.deleteById(id);
-        return "Book with id " + id + " has been deleted.";
+        return new InfoResponse("Book with id " + id + " has been deleted.");
     }
 
 
