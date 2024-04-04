@@ -35,9 +35,12 @@ public class LoanEntity {
     @JoinColumn
     private BookEntity book;
 
-    @PrePersist
-    private void init(){
-        loanDate = LocalDateTime.now();
-    }
+    @Override
+    public String toString() {
+        return "LoanEntity{" +
+                "id=" + id +
+                ", loanDate='" + loanDate + '\'' +
 
+                '}';
+    }
 }

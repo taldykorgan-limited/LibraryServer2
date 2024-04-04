@@ -39,6 +39,14 @@ public class BookEntity {
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "books")
     private List<GenreEntity> genres;
 
+    @Override
+    public String toString() {
+        return "BookEntity{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", quantity=" + quantity +
 
-
+                '}';
+    }
 }
