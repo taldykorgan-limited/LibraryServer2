@@ -1,6 +1,7 @@
 package com.example.libraryserver.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,6 +35,7 @@ public class BookEntity {
     private List<AuthorEntity> authors;
 
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "book")
+    @JsonManagedReference
     private List<LoanEntity> loans;
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "books")

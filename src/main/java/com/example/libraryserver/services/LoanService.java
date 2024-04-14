@@ -59,7 +59,15 @@ public class LoanService {
                 .orElseThrow(() -> new ResourceNotFoundException("Loan with id " + id + " not found"));
         GetLoanResponse getLoanResponse = GetLoanResponse.builder()
                 .id(loanEntity.getId())
-                .book(loanEntity.getBook())
+                .book(
+                        GetLoanResponse.Book.builder()
+                                .id(loanEntity.getBook().getId())
+                                .title(loanEntity.getBook().getTitle())
+                                .description(loanEntity.getBook().getDescription())
+                                .authors(loanEntity.getBook().getAuthors())
+                                .genres(loanEntity.getBook().getGenres())
+                                .build()
+                )
                 .user(loanEntity.getUser())
                 .status(loanEntity.getStatus())
                 .loanDate(loanEntity.getLoanDate())
@@ -73,12 +81,18 @@ public class LoanService {
             List<LoanEntity> loanEntityList = user.get().getLoans();
             List<GetLoanResponse> getLoanResponseList = loanEntityList.stream()
                     .map(loanEntity -> GetLoanResponse.builder()
-                            .id(loanEntity.getId())
-                            .user(user.get())
-                            .status(loanEntity.getStatus())
-                            .book(loanEntity.getBook())
-                            .loanDate(loanEntity.getLoanDate())
-                            .build()
+                                    .id(loanEntity.getId())
+                                    .user(user.get())
+                                    .status(loanEntity.getStatus())
+//                            .book(
+//                                    GetLoanResponse.Book.builder()
+//
+//
+//
+//                                            .build()
+//                            )
+                                    .loanDate(loanEntity.getLoanDate())
+                                    .build()
 
                     ).toList();
             return new GetLoansResponse(getLoanResponseList);

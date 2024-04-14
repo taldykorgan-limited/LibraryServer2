@@ -18,6 +18,6 @@ public class UpdateBookRequest {
     private String title;
     private String description;
     private int quantity;
-    private List<AuthorEntity> authors;
-    private List<GenreEntity> genres;
+    private List<Long> authors;
+    private List<Long> genres;
 }

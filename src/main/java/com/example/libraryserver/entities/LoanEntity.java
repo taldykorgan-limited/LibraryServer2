@@ -1,6 +1,7 @@
 package com.example.libraryserver.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,10 +30,12 @@ public class LoanEntity {
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinColumn
+    @JsonBackReference
     private UserEntity user;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinColumn
+    @JsonBackReference
     private BookEntity book;
 
     @Override
