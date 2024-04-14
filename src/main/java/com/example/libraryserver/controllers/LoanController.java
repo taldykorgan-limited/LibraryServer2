@@ -7,6 +7,7 @@ import com.example.libraryserver.responses.loans.GetLoanResponse;
 import com.example.libraryserver.responses.loans.GetLoansResponse;
 import com.example.libraryserver.services.LoanService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,7 +18,7 @@ public class LoanController {
     private final LoanService loanService;
 
     @PostMapping("/create")
-    public InfoResponse createLoan(@RequestBody CreateLoanRequest createLoanRequest) {
+    public ResponseEntity<InfoResponse> createLoan(@RequestBody CreateLoanRequest createLoanRequest) {
         return loanService.createLoan(createLoanRequest);
     }
 
@@ -28,7 +29,7 @@ public class LoanController {
     }
 
     @PatchMapping("/update")
-    public InfoResponse updateLoanStatus(@RequestBody UpdateLoanStatusRequest request) {
+    public ResponseEntity<InfoResponse> updateLoanStatus(@RequestBody UpdateLoanStatusRequest request) {
         return loanService.updateLoanStatus(request);
     }
 
