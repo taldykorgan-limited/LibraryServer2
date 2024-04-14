@@ -1,13 +1,19 @@
 package com.example.libraryserver.services;
 
 import com.example.libraryserver.entities.GenreEntity;
+import com.example.libraryserver.exceptions.DatabaseConnectionException;
+import com.example.libraryserver.exceptions.ResourceNotFoundException;
 import com.example.libraryserver.repositories.GenreRepository;
 import com.example.libraryserver.requests.genres.CreateGenreRequest;
 import com.example.libraryserver.requests.genres.UpdateGenreRequest;
 import com.example.libraryserver.responses.general.InfoResponse;
 import com.example.libraryserver.responses.genres.GetGenreResponse;
 import com.example.libraryserver.responses.genres.GetGenresResponse;
+import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,18 +26,26 @@ public class GenreService {
     private final GenreRepository genreRepository;
 
 
-    public InfoResponse createGenre(CreateGenreRequest createGenreRequest) {
+    public ResponseEntity<InfoResponse> createGenre(CreateGenreRequest createGenreRequest) {
         GenreEntity genreEntity = GenreEntity.builder()
                 .name(createGenreRequest.getName())
                 .info(createGenreRequest.getInfo())
                 .build();
-        genreRepository.save(genreEntity);
-        return new InfoResponse("Genre created: " + createGenreRequest.getName());
+        try {
+            genreRepository.save(genreEntity);
+            return new ResponseEntity<>(new InfoResponse("Genre created: " + createGenreRequest.getName()), HttpStatus.CREATED);
+            //return ResponseEntity.ok("Genre created: " + createGenreRequest.getName());
+            //return new InfoResponse("Genre created: " + createGenreRequest.getName());
+        } catch (DataAccessException | PersistenceException e) {
+            throw new DatabaseConnectionException("Genre was not created due to problems connecting to the database");
+            //return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Genre was not created");
+            //return new InfoResponse("Genre was not created: " + e.getMessage());
+        }
     }
 
     public GetGenreResponse getGenreByIdBrief(Long id) {
         GenreEntity genreEntity = genreRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Genre with id " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Genre with id " + id + " not found"));
 
         GetGenreResponse getGenreResponse = GetGenreResponse.builder()
                 .id(genreEntity.getId())
@@ -42,7 +56,7 @@ public class GenreService {
 
     public GetGenreResponse getGenreByIdFull(Long id) {
         GenreEntity genreEntity = genreRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Genre with id " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Genre with id " + id + " not found"));
 
         GetGenreResponse getGenreResponse = GetGenreResponse.builder()
                 .id(genreEntity.getId())
@@ -77,21 +91,28 @@ public class GenreService {
         return new GetGenresResponse(getGenreResponseList);
     }
 
-    public InfoResponse updateGenre(UpdateGenreRequest updateGenreRequest) {
+    public ResponseEntity<InfoResponse> updateGenre(UpdateGenreRequest updateGenreRequest) {
         GenreEntity genreEntity = genreRepository.findById(updateGenreRequest.getId())
-                .orElseThrow(() -> new NoSuchElementException("Genre with id " + updateGenreRequest.getId() + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Genre with id " + updateGenreRequest.getId() + " not found"));
+        try {
+            genreEntity.setName(updateGenreRequest.getName());
+            genreEntity.setInfo(updateGenreRequest.getInfo());
+            genreEntity.setBooks(updateGenreRequest.getBooks());
+            genreRepository.save(genreEntity);
+            return new ResponseEntity<>(new InfoResponse("Genre with id " + updateGenreRequest.getId() + " has been updated."), HttpStatus.OK);
+        } catch (DataAccessException | PersistenceException e) {
+            throw new DatabaseConnectionException("Genre was not updated due to problems connecting to the database");
+        }
 
-        genreEntity.setName(updateGenreRequest.getName());
-        genreEntity.setInfo(updateGenreRequest.getInfo());
-        genreEntity.setBooks(updateGenreRequest.getBooks());
-        genreRepository.save(genreEntity);
-
-        return new InfoResponse("Genre with id " + updateGenreRequest.getId() + " has been updated.");
     }
 
-    public InfoResponse deleteGenre(Long id) {
-        genreRepository.deleteById(id);
-        return new InfoResponse("Genre with id " + id + " has been deleted.");
+    public ResponseEntity<InfoResponse> deleteGenre(Long id) {
+        try {
+            genreRepository.deleteById(id);
+            return new ResponseEntity<>(new InfoResponse("Genre with id " + id + " has been deleted."), HttpStatus.OK);
+        } catch (DataAccessException | PersistenceException e) {
+            throw new DatabaseConnectionException("Genre was not deleted due to problems connecting to the database");
+        }
     }
 
 

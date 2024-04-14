@@ -7,6 +7,7 @@ import com.example.libraryserver.responses.genres.GetGenreResponse;
 import com.example.libraryserver.responses.genres.GetGenresResponse;
 import com.example.libraryserver.services.GenreService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,7 +19,7 @@ public class GenreController {
 
 
     @PostMapping("/create")
-    public InfoResponse createGenre(@RequestBody CreateGenreRequest createGenreRequest) {
+    public ResponseEntity<InfoResponse> createGenre(@RequestBody CreateGenreRequest createGenreRequest) {
         return genreService.createGenre(createGenreRequest);
     }
 
@@ -43,12 +44,12 @@ public class GenreController {
     }
 
     @PatchMapping("/update")
-    public InfoResponse updateGenre(@RequestBody UpdateGenreRequest updateGenreRequest) {
+    public ResponseEntity<InfoResponse> updateGenre(@RequestBody UpdateGenreRequest updateGenreRequest) {
         return genreService.updateGenre(updateGenreRequest);
     }
 
     @DeleteMapping("/delete")
-    public InfoResponse deleteGenre(Long id) {
+    public ResponseEntity<InfoResponse> deleteGenre(Long id) {
         return genreService.deleteGenre(id);
     }
 
