@@ -10,27 +10,21 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    @ExceptionHandler
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<InfoResponse> catchResourceNotFoundException(ResourceNotFoundException e){
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new InfoResponse(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(StatusConflictException.class)
     public ResponseEntity<InfoResponse> catchStatusConflictException(StatusConflictException e){
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new InfoResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(DatabaseConnectionException.class)
     public ResponseEntity<InfoResponse> catchDatabaseConnectionException(DatabaseConnectionException e){
         log.error(e.getMessage());
         return new ResponseEntity<>(new InfoResponse(e.getMessage()), HttpStatus.SERVICE_UNAVAILABLE);
     }
-
-//    @ExceptionHandler
-//    public ResponseEntity<String> catchResourceNotAvailableException(ResourceNotAvailableException e){
-//        log.error(e.getMessage(), e);
-//        return ResponseEntity.status(HttpStatus.Not)
-//    }
 }

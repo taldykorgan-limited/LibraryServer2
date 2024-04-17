@@ -84,8 +84,8 @@ public class BookService {
             if (updateBookRequest.getTitle() != null) {
                 bookEntity.setTitle(updateBookRequest.getTitle());
             }
-            if (updateBookRequest.getQuantity() != null) {
-                bookEntity.setQuantity(Integer.parseInt(updateBookRequest.getQuantity()));
+            if (updateBookRequest.getQuantity() > 0) {
+                bookEntity.setQuantity(updateBookRequest.getQuantity());
             }
             if (updateBookRequest.getDescription() != null) {
                 bookEntity.setDescription(updateBookRequest.getDescription());

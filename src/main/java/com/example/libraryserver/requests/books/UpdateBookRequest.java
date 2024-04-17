@@ -17,7 +17,7 @@ public class UpdateBookRequest {
     private long id;
     private String title;
     private String description;
-    private String quantity;
+    private int quantity = -1;
     private List<Long> authors;
     private List<Long> genres;
 }
