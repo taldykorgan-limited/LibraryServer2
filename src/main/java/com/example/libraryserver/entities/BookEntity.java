@@ -33,6 +33,7 @@ public class BookEntity {
     private int quantity;
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @JsonManagedReference(value = "book-author reference")
     private List<AuthorEntity> authors;
 
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "book")

@@ -1,5 +1,6 @@
 package com.example.libraryserver.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +34,7 @@ public class AuthorEntity {
     private String info;
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "authors")
+    @JsonBackReference(value = "book-author reference")
     private List<BookEntity> books;
 
 }

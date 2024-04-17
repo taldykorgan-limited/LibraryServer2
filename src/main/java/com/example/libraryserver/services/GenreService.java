@@ -34,12 +34,8 @@ public class GenreService {
         try {
             genreRepository.save(genreEntity);
             return new ResponseEntity<>(new InfoResponse("Genre created: " + createGenreRequest.getName()), HttpStatus.CREATED);
-            //return ResponseEntity.ok("Genre created: " + createGenreRequest.getName());
-            //return new InfoResponse("Genre created: " + createGenreRequest.getName());
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseConnectionException("Genre was not created due to problems connecting to the database");
-            //return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Genre was not created");
-            //return new InfoResponse("Genre was not created: " + e.getMessage());
         }
     }
 
