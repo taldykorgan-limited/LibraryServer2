@@ -1,4 +1,4 @@
-package com.example.libraryserver.конфиг;
+package com.example.libraryserver.configs;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +15,8 @@ import static com.example.libraryserver.entities.Role.*;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class КонфигБезопасности {
-    private final КонфигФильтраЖвтАунтетификации конфигФильтраЖвтАунтетификации;
+public class SecurityConfig {
+    private final JwtFilterConfig jwtFilterConfig;
     private final AuthenticationProvider authenticationProvider;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -46,7 +46,7 @@ public class КонфигБезопасности {
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(конфигФильтраЖвтАунтетификации, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilterConfig, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

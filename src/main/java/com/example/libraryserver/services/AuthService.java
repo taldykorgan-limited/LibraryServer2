@@ -19,10 +19,10 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-public class СервисАунтефикации {
+public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ЖвтСервис жвтСервис;
+    private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
     /**
@@ -31,7 +31,7 @@ public class СервисАунтефикации {
      * @param request запрос на аутентификацию
      * @return ответ с JWT токеном
      */
-    public AuthenticationResponse аунтефицировать(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getLogin(),
@@ -39,7 +39,7 @@ public class СервисАунтефикации {
                 )
         );
         var user = userRepository.findByLogin(request.getLogin()).orElseThrow();
-        var jwtToken = жвтСервис.сгенерироватьТокен(user);
+        var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .role(user.getRole())
@@ -52,7 +52,7 @@ public class СервисАунтефикации {
      * @param request запрос на регистрацию
      * @return ответ с JWT токеном
      */
-    public AuthenticationResponse зарегестрировать(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterRequest request) {
         Optional<UserEntity> userRepositoryByEmail = userRepository.findByLogin(request.getLogin());
 
         if (userRepositoryByEmail.isPresent()) {
@@ -69,7 +69,7 @@ public class СервисАунтефикации {
 
         userRepository.save(user);
 
-        var jwtToken = жвтСервис.сгенерироватьТокен(user);
+        var jwtToken = jwtService.generateToken(user);
 
         return AuthenticationResponse.builder()
                 .token(jwtToken)
