@@ -7,8 +7,6 @@ import com.example.libraryserver.responses.books.GetBooksResponse;
 import com.example.libraryserver.responses.general.InfoResponse;
 import com.example.libraryserver.services.BookService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +19,8 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createBook(@RequestBody CreateBookRequest createBookRequest){
-        return new ResponseEntity<>(bookService.createBook(createBookRequest),HttpStatus.CREATED);
+    public InfoResponse createBook(@RequestBody CreateBookRequest createBookRequest){
+        return bookService.createBook(createBookRequest);
     }
 
     @GetMapping("/get")

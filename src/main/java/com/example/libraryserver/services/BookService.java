@@ -1,7 +1,6 @@
 package com.example.libraryserver.services;
 
 import com.example.libraryserver.entities.BookEntity;
-import com.example.libraryserver.exceptions.BadRequestProvidedException;
 import com.example.libraryserver.repositories.BookRepository;
 import com.example.libraryserver.requests.books.CreateBookRequest;
 import com.example.libraryserver.requests.books.UpdateBookRequest;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,13 +54,7 @@ public class BookService {
         }
     }
 
-    public CreateBookRequest createBook(CreateBookRequest createBookRequest) {
-        if (createBookRequest.getQuantity() < 0){
-            throw new BadRequestProvidedException("Quantity can't be negative " + createBookRequest.getQuantity());
-        }
-
-
-
+    public InfoResponse createBook(CreateBookRequest createBookRequest) {
         BookEntity bookEntity = BookEntity.builder()
                 .title(createBookRequest.getTitle())
                 .description(createBookRequest.getDescription())
@@ -68,13 +62,8 @@ public class BookService {
                 .authors(createBookRequest.getAuthors())
                 .genres(createBookRequest.getGenres())
                 .build();
-
         bookRepository.save(bookEntity);
-        return CreateBookRequest.builder()
-                .title(bookEntity.getTitle())
-                .description(bookEntity.getDescription())
-                .quantity(bookEntity.getQuantity())
-                .build();
+        return new InfoResponse("Book created: " + bookEntity);
     }
 
     public InfoResponse updateBook(UpdateBookRequest updateBookRequest) {
