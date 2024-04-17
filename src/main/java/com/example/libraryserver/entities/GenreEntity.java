@@ -1,5 +1,7 @@
 package com.example.libraryserver.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +33,7 @@ public class GenreEntity {
     @Column(columnDefinition = "text")
     private String info;
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "genres")
+    @JsonBackReference(value = "book-genres reference")
     private List<BookEntity> books;
 }
