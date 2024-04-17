@@ -16,8 +16,8 @@ import java.util.Objects;
 import java.util.function.Function;
 
 @Service
-public class ЖвтСервис {
-    private static final String СЕКРЕТНЫЙ_КЛЮЧ = ("9c56bbb2442aa20f7d48ce5ba13b75c38000266334fb008387322a8a8ff24944").toUpperCase();
+public class JwtService {
+    private static final String SECRET_KEY = ("9c56bbb2442aa20f7d48ce5ba13b75c38000266334fb008387322a8a8ff24944").toUpperCase();
 
     /**
      * Извлекает имя пользователя из JWT токена.
@@ -25,8 +25,8 @@ public class ЖвтСервис {
      * @param jwtToken JWT токен
      * @return имя пользователя
      */
-    public String вычленитьИмяПользователя(String jwtToken) {
-        return вычленитьУтверждение(jwtToken, Claims::getSubject);
+    public String extractUsername(String jwtToken) {
+        return ExtractClaim(jwtToken, Claims::getSubject);
     }
 
     /**
@@ -36,8 +36,8 @@ public class ЖвтСервис {
      * @param claimsResolver функция для извлечения утверждения
      * @return утверждение
      */
-    public <T> T вычленитьУтверждение(String jwtToken, Function<Claims, T> claimsResolver){
-        final Claims claims = вычленитьВсеУтверждения(jwtToken);
+    public <T> T ExtractClaim(String jwtToken, Function<Claims, T> claimsResolver){
+        final Claims claims = extractAllClaims(jwtToken);
         return claimsResolver.apply(claims);
     }
 
@@ -47,8 +47,8 @@ public class ЖвтСервис {
      * @param userDetails детали пользователя
      * @return JWT токен
      */
-    public String сгенерироватьТокен(UserDetails userDetails){
-        return сгенерироватьТокен(new HashMap<>(), userDetails);
+    public String generateToken(UserDetails userDetails){
+        return generateToken(new HashMap<>(), userDetails);
     }
 
     /**
@@ -58,14 +58,14 @@ public class ЖвтСервис {
      * @param userDetails детали пользователя
      * @return JWT токен
      */
-    public String сгенерироватьТокен(Map<String, Objects> claims, UserDetails userDetails){
+    public String generateToken(Map<String, Objects> claims, UserDetails userDetails){
         return Jwts
                 .builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 7)))
-                .signWith(получитьКлючПодписи(), SignatureAlgorithm.HS256)
+                .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -76,9 +76,9 @@ public class ЖвтСервис {
      * @param userDetails детали пользователя
      * @return true, если токен валиден, иначе false
      */
-    public boolean валидныйЛиТокен(String jwtToken, UserDetails userDetails){
-        final String username = вычленитьИмяПользователя(jwtToken);
-        return username.equals(userDetails.getUsername()) && !истекЛиТокен(jwtToken);
+    public boolean isTokenValid(String jwtToken, UserDetails userDetails){
+        final String username = extractUsername(jwtToken);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken);
     }
 
     /**
@@ -87,8 +87,8 @@ public class ЖвтСервис {
      * @param jwtToken JWT токен
      * @return true, если время действия истекло, иначе false
      */
-    private boolean истекЛиТокен(String jwtToken) {
-        return вычленитьВремяИстечения(jwtToken).before(new Date());
+    private boolean isTokenExpired(String jwtToken) {
+        return extractExpirationTime(jwtToken).before(new Date());
     }
 
     /**
@@ -97,8 +97,8 @@ public class ЖвтСервис {
      * @param jwtToken JWT токен
      * @return время истечения
      */
-    private Date вычленитьВремяИстечения(String jwtToken) {
-        return вычленитьУтверждение(jwtToken, Claims::getExpiration);
+    private Date extractExpirationTime(String jwtToken) {
+        return ExtractClaim(jwtToken, Claims::getExpiration);
     }
 
     /**
@@ -107,10 +107,10 @@ public class ЖвтСервис {
      * @param jwtToken JWT токен
      * @return утверждения
      */
-    private Claims вычленитьВсеУтверждения(String jwtToken){
+    private Claims extractAllClaims(String jwtToken){
         return Jwts
                 .parserBuilder()
-                .setSigningKey(получитьКлючПодписи())
+                .setSigningKey(getSignKey())
                 .build()
                 .parseClaimsJws(jwtToken)
                 .getBody();
@@ -121,8 +121,8 @@ public class ЖвтСервис {
      *
      * @return ключ
      */
-    private Key получитьКлючПодписи() {
-        byte[] keyBytes = Decoders.BASE64.decode(СЕКРЕТНЫЙ_КЛЮЧ);
+    private Key getSignKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

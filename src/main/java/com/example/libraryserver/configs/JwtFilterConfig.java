@@ -1,6 +1,6 @@
-package com.example.libraryserver.конфиг;
+package com.example.libraryserver.configs;
 
-import com.example.libraryserver.services.ЖвтСервис;
+import com.example.libraryserver.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,9 +19,9 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class КонфигФильтраЖвтАунтетификации extends OncePerRequestFilter {
+public class JwtFilterConfig extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
-    private final ЖвтСервис жвтСервис;
+    private final JwtService jwtService;
     /**
      * Фильтрует каждый запрос, проверяет наличие JWT токена в заголовке и аутентифицирует пользователя.
      *
@@ -46,17 +46,17 @@ public class КонфигФильтраЖвтАунтетификации extend
             return;
         }
         jwtToken = authHeader.substring(7);
-        userEmail = жвтСервис.вычленитьИмяПользователя(jwtToken); // извлекаем из JWT токена
+        userEmail = jwtService.extractUsername(jwtToken); // извлекаем из JWT токена
 
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);// проверяем, что полученное мыло не null, и что пользователь не залогинен
-            if(жвтСервис.валидныйЛиТокен(jwtToken, userDetails)){// проверяем валидность токена
+            if(jwtService.isTokenValid(jwtToken, userDetails)){// проверяем валидность токена
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
                         userDetails.getAuthorities() //
                 );// создаем аутентификационный токен
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));;
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 // устанавливаем детали аутентификации
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }

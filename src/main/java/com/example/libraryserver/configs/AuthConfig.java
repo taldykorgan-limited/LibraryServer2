@@ -1,4 +1,4 @@
-package com.example.libraryserver.конфиг;
+package com.example.libraryserver.configs;
 
 import com.example.libraryserver.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
-public class КонфигПриложения {
+public class AuthConfig {
     private final UserRepository userRepository;
     @Bean
     public UserDetailsService userDetailsService(){
