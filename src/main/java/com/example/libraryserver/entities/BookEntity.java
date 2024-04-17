@@ -1,6 +1,8 @@
 package com.example.libraryserver.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,23 +32,15 @@ public class BookEntity {
     private String description;
     private int quantity;
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "books")
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     private List<AuthorEntity> authors;
 
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "book")
+    @JsonBackReference(value = "loan-book reference")
     private List<LoanEntity> loans;
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "books")
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @JsonManagedReference(value = "book-genres reference")
     private List<GenreEntity> genres;
 
-    @Override
-    public String toString() {
-        return "BookEntity{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", quantity=" + quantity +
-
-                '}';
-    }
 }

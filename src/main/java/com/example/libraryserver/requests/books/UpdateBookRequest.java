@@ -17,7 +17,7 @@ public class UpdateBookRequest {
     private long id;
     private String title;
     private String description;
-    private int quantity;
-    private List<AuthorEntity> authors;
-    private List<GenreEntity> genres;
+    private String quantity;
+    private List<Long> authors;
+    private List<Long> genres;
 }

@@ -32,7 +32,7 @@ public class AuthorEntity {
     @Column(columnDefinition = "text")
     private String info;
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "authors")
     private List<BookEntity> books;
 
 }

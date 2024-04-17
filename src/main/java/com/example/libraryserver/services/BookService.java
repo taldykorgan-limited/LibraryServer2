@@ -1,9 +1,13 @@
 package com.example.libraryserver.services;
 
+import com.example.libraryserver.entities.AuthorEntity;
 import com.example.libraryserver.entities.BookEntity;
+import com.example.libraryserver.entities.GenreEntity;
 import com.example.libraryserver.exceptions.DatabaseConnectionException;
 import com.example.libraryserver.exceptions.ResourceNotFoundException;
+import com.example.libraryserver.repositories.AuthorRepository;
 import com.example.libraryserver.repositories.BookRepository;
+import com.example.libraryserver.repositories.GenreRepository;
 import com.example.libraryserver.requests.books.CreateBookRequest;
 import com.example.libraryserver.requests.books.UpdateBookRequest;
 import com.example.libraryserver.responses.books.GetBookResponse;
@@ -24,22 +28,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
+    private final GenreRepository genreRepository;
+    private final AuthorRepository authorRepository;
 
     public ResponseEntity<InfoResponse> createBook(CreateBookRequest createBookRequest) {
-        BookEntity bookEntity = BookEntity.builder()
-                .title(createBookRequest.getTitle())
-                .description(createBookRequest.getDescription())
-                .quantity(createBookRequest.getQuantity())
-                .authors(createBookRequest.getAuthors())
-                .genres(createBookRequest.getGenres())
-                .build();
         try {
+            BookEntity bookEntity = BookEntity.builder()
+                    .title(createBookRequest.getTitle())
+                    .description(createBookRequest.getDescription())
+                    .quantity(createBookRequest.getQuantity())
+                    .authors(createBookRequest.getAuthors() != null ? authorRepository.findAllById(createBookRequest.getAuthors()) : null)
+                    .genres(createBookRequest.getGenres() != null ? genreRepository.findAllById(createBookRequest.getGenres()) : null)
+                    .build();
             bookRepository.save(bookEntity);
             return new ResponseEntity<>(new InfoResponse("Book created: " + bookEntity), HttpStatus.CREATED);
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseConnectionException("Genre was not created due to problems connecting to the database");
         }
     }
+
     public GetBookResponse getBookById(Long id) {
         BookEntity bookEntity = bookRepository.findBookEntityById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book with id " + id + " not found"));
@@ -73,27 +80,37 @@ public class BookService {
     public ResponseEntity<InfoResponse> updateBook(UpdateBookRequest updateBookRequest) {
         BookEntity bookEntity = bookRepository.findBookEntityById(updateBookRequest.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book with id " + updateBookRequest.getId() + " not found"));
-        bookEntity.setTitle(updateBookRequest.getTitle());
-        bookEntity.setQuantity(updateBookRequest.getQuantity());
-        bookEntity.setDescription(updateBookRequest.getDescription());
-        bookEntity.setAuthors(updateBookRequest.getAuthors());
-        bookEntity.setGenres(updateBookRequest.getGenres());
-        try{
-        bookRepository.save(bookEntity);
-        return new ResponseEntity<>(new InfoResponse("Book with id " + updateBookRequest.getId() + " updated."), HttpStatus.OK);
+        try {
+            if (updateBookRequest.getTitle() != null) {
+                bookEntity.setTitle(updateBookRequest.getTitle());
+            }
+            if (updateBookRequest.getQuantity() != null) {
+                bookEntity.setQuantity(Integer.parseInt(updateBookRequest.getQuantity()));
+            }
+            if (updateBookRequest.getDescription() != null) {
+                bookEntity.setDescription(updateBookRequest.getDescription());
+            }
+            if (updateBookRequest.getGenres() != null) {
+                bookEntity.setGenres(genreRepository.findAllById(updateBookRequest.getGenres()));
+            }
+            if (updateBookRequest.getAuthors() != null) {
+                bookEntity.setAuthors(authorRepository.findAllById(updateBookRequest.getAuthors()));
+            }
+            bookRepository.save(bookEntity);
+            return new ResponseEntity<>(new InfoResponse("Book with id " + updateBookRequest.getId() + " updated."), HttpStatus.OK);
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseConnectionException("Book was not updated due to problems connecting to the database");
         }
     }
 
     public ResponseEntity<InfoResponse> deleteBook(Long id) {
-        try{
-        bookRepository.deleteById(id);
-        return new ResponseEntity<>(new InfoResponse("Book with id " + id + " has been deleted."), HttpStatus.OK);
+        try {
+            bookRepository.deleteById(id);
+            return new ResponseEntity<>(new InfoResponse("Book with id " + id + " has been deleted."), HttpStatus.OK);
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseConnectionException("Book was not deleted due to problems connecting to the database");
         }
-        }
+    }
 
 
 }
