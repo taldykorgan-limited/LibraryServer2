@@ -26,7 +26,7 @@ public class SecurityConfig {
 
                         //.requestMatchers("/api/v1/user/**").permitAll()
 
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/files/**").permitAll()
 
                         .requestMatchers("/api/v1/staff/**").hasAnyRole(ADMIN.name(), STAFF.name())
 
