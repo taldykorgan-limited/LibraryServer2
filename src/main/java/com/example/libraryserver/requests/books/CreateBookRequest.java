@@ -16,16 +16,14 @@ public class CreateBookRequest {
     private String title;
     private String description;
     private int quantity;
-    private List<AuthorEntity> authors;
-    private List<GenreEntity> genres;
+    //private List<AuthorEntity> authors;
+    //private List<GenreEntity> genres;
 
     @Override
     public String toString() {
         return
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", quantity=" + quantity +
-                ", authors=" + authors +
-                ", genres=" + genres;
+                ", quantity=" + quantity;
     }
 }

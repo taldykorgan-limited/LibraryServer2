@@ -38,8 +38,10 @@ public class BookEntity {
     @JsonManagedReference
     private List<LoanEntity> loans;
 
+
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "books")
-    private List<GenreEntity> genres;
+    @JsonManagedReference
+    private List<GenreEntity> genres = new ArrayList<>();
 
     @Override
     public String toString() {

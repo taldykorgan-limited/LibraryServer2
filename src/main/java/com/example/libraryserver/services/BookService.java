@@ -2,6 +2,7 @@ package com.example.libraryserver.services;
 
 import com.example.libraryserver.entities.AuthorEntity;
 import com.example.libraryserver.entities.BookEntity;
+import com.example.libraryserver.entities.GenreEntity;
 import com.example.libraryserver.exceptions.DatabaseConnectionException;
 import com.example.libraryserver.exceptions.ResourceNotFoundException;
 import com.example.libraryserver.repositories.AuthorRepository;
@@ -35,8 +36,6 @@ public class BookService {
                 .title(createBookRequest.getTitle())
                 .description(createBookRequest.getDescription())
                 .quantity(createBookRequest.getQuantity())
-                .authors(createBookRequest.getAuthors())
-                .genres(createBookRequest.getGenres())
                 .build();
         try {
             bookRepository.save(bookEntity);
@@ -49,7 +48,7 @@ public class BookService {
     public GetBookResponse getBookById(Long id) {
         BookEntity bookEntity = bookRepository.findBookEntityById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book with id " + id + " not found"));
-
+        System.out.println(bookEntity.getGenres());
         GetBookResponse getBookResponse = GetBookResponse.builder()
                 .id(bookEntity.getId())
                 .title(bookEntity.getTitle())
@@ -80,14 +79,32 @@ public class BookService {
         BookEntity bookEntity = bookRepository.findBookEntityById(updateBookRequest.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book with id " + updateBookRequest.getId() + " not found"));
 //        try {
+
+        List<GenreEntity> genres = genreRepository.findAllById(updateBookRequest.getGenres());
+
+//        for (long a: updateBookRequest.getGenres()){
+//            GenreEntity genreEntity = genreRepository.findById(a).orElseThrow(() -> new ResourceNotFoundException("Genre with id " + a + " not found"));
+//            genreEntity.setBooks(List.of(bookEntity));
+//            genreRepository.save(genreEntity);
+//        }
             bookEntity.setTitle(updateBookRequest.getTitle());
             bookEntity.setQuantity(updateBookRequest.getQuantity());
             bookEntity.setDescription(updateBookRequest.getDescription());
+            //List<GenreEntity> genres = genreRepository.findAllById(updateBookRequest.getGenres());
             //bookEntity.setAuthors(authorRepository.findAllById(updateBookRequest.getAuthors()));
-            bookEntity.setGenres(genreRepository.findAllById(updateBookRequest.getGenres()));
+            //bookEntity.setGenres(genres);
+        //bookEntity.setGenres(genres);
+
+        for (GenreEntity genreEntity: genres){
+            genreEntity.getBooks().add(bookEntity);
+        }
+        bookEntity.getGenres().addAll(genres);
+        
         System.out.println(bookEntity.getGenres());
         System.out.println(bookEntity);
-            bookRepository.save(bookEntity);
+        bookRepository.save(bookEntity);
+        System.out.println(bookEntity.getGenres());
+        System.out.println(bookEntity);
             return new ResponseEntity<>(new InfoResponse("Book with id " + updateBookRequest.getId() + " updated."), HttpStatus.OK);
 //        } catch (DataAccessException | PersistenceException e) {
 //            throw new DatabaseConnectionException("Book was not updated due to problems connecting to the database");
