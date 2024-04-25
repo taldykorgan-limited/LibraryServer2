@@ -12,5 +12,7 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
     Optional<BookEntity> findBookEntityById(Long id);
 
     List<BookEntity> findAllByAuthors(List<AuthorEntity> authors);
-
+    // find bookentyties in range
+    List<BookEntity> findAllByIdBetween(Long start, Long end);
+    //count all books
 }
