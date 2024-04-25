@@ -28,6 +28,7 @@ public class UserEntity implements UserDetails {
             generator = "user_sequence"
     )
     private Long id;
+    @Column(unique = true)
     private String login;
     private String password;
     private String name;

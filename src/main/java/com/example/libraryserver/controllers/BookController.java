@@ -44,5 +44,12 @@ public class BookController {
         return bookService.deleteBook(id);
     }
 
-
+    @GetMapping("/getPage")
+    public ResponseEntity<?> getPage(@RequestParam int page, @RequestParam int size){
+        return bookService.getPage(page, size);
+    }
+    @GetMapping("/getAmount")
+    public ResponseEntity<?> getAmount(){
+        return bookService.getAmount();
+    }
 }

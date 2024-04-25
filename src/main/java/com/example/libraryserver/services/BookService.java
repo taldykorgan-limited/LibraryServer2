@@ -11,6 +11,7 @@ import com.example.libraryserver.repositories.GenreRepository;
 import com.example.libraryserver.requests.books.CreateBookRequest;
 import com.example.libraryserver.requests.books.UpdateBookRequest;
 import com.example.libraryserver.responses.books.GetBookResponse;
+import com.example.libraryserver.responses.books.GetBooksAmountResponse;
 import com.example.libraryserver.responses.books.GetBooksResponse;
 import com.example.libraryserver.responses.general.InfoResponse;
 import jakarta.persistence.PersistenceException;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -113,4 +115,26 @@ public class BookService {
     }
 
 
+    public ResponseEntity<?> getPage(int page, int size) {
+        Long startId = (long) size * (page - 1L) + 1L;
+        Long endId = startId + size - 1L;
+        List<BookEntity> bookEntities = bookRepository.findAllByIdBetween(startId,endId);
+        List<GetBookResponse> getBookResponseList = bookEntities.stream()
+                .map(bookEntity -> GetBookResponse.builder()
+                        .id(bookEntity.getId())
+                        .title(bookEntity.getTitle())
+                        .quantity(bookEntity.getQuantity())
+                        .authors(bookEntity.getAuthors())
+                        .description(bookEntity.getDescription())
+                        .genres(bookEntity.getGenres())
+                        .build())
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(new GetBooksResponse(getBookResponseList), HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getAmount() {
+        Long amount = bookRepository.count();
+        return new ResponseEntity<GetBooksAmountResponse>(new GetBooksAmountResponse(amount), HttpStatus.OK);
+    }
 }
