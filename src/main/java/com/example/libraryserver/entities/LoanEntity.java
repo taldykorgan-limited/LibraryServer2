@@ -26,6 +26,8 @@ public class LoanEntity {
             generator = "loan_sequence"
     )
     private Long id;
+    @Version
+    private Long version;
     private LocalDateTime loanDate;
     private int status; // 1- книга на руках у юзера, 2- книга возвращена
 
