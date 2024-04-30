@@ -29,6 +29,8 @@ public class GenreEntity {
             generator = "genre_sequence"
     )
     private Long id;
+    @Version
+    private Long version;
     private String name;
     @Column(columnDefinition = "text")
     private String info;

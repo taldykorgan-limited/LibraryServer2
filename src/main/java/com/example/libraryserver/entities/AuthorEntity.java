@@ -28,6 +28,8 @@ public class AuthorEntity {
             generator = "author_sequence"
     )
     private Long id;
+    @Version
+    private Long version;
     private String name;
     private String surname;
     @Column(columnDefinition = "text")

@@ -27,6 +27,8 @@ public class BookEntity {
             generator = "book_sequence"
     )
     private Long id;
+    @Version
+    private Long version;
     private String title;
     @Column(columnDefinition = "text")
     private String description;
