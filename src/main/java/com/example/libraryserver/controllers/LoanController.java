@@ -8,6 +8,7 @@ import com.example.libraryserver.responses.loans.GetLoansResponse;
 import com.example.libraryserver.services.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class LoanController {
 
     private final LoanService loanService;
-
+    @Transactional
     @PostMapping("/create")
     public ResponseEntity<InfoResponse> createLoan(@RequestBody CreateLoanRequest createLoanRequest) {
         return loanService.createLoan(createLoanRequest);

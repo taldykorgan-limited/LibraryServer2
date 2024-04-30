@@ -14,6 +14,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateLoanRequest {
-    private UserEntity user;
-    private Long bookId;
+    //private UserEntity user;
+    private long bookId;
 }

@@ -19,7 +19,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,8 +37,10 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
-
     public ResponseEntity<InfoResponse> createLoan(CreateLoanRequest createLoanRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserEntity user = (userRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found " + authentication.getName())));
         BookEntity book = bookRepository.findBookEntityById(createLoanRequest.getBookId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book with id " + createLoanRequest.getBookId() + " not found"));
         if (book.getQuantity() > 0) {
@@ -42,15 +48,13 @@ public class LoanService {
                     .loanDate(LocalDateTime.now())
                     .status(1)
                     .book(book)
-                    .user(createLoanRequest.getUser())
+                    .user(user)
                     .build();
             book.setQuantity(book.getQuantity() - 1);
             bookRepository.save(book);
             loanRepository.save(loanEntity);
-            //return new ResponseEntity<>(HttpStatus.CREATED);
-            return new ResponseEntity<>(new InfoResponse("Loan created"), HttpStatus.CREATED);
+            return new ResponseEntity<>(new InfoResponse("Loan created: id " + loanEntity.getId()), HttpStatus.CREATED);
         }
-        //else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book " + book.getTitle() + " is not available");
         else throw new ResourceNotFoundException("Book " + book.getTitle() + " not available");
     }
 
