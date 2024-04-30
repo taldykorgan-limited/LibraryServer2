@@ -137,4 +137,20 @@ public class BookService {
         Long amount = bookRepository.count();
         return new ResponseEntity<GetBooksAmountResponse>(new GetBooksAmountResponse(amount), HttpStatus.OK);
     }
+
+    public ResponseEntity<?> getByTitle(String title) {
+        List<BookEntity> bookEntities = bookRepository.findBookEntitiesByTitleContaining(title);
+        // TODO: reconsider about using this
+        List<GetBookResponse> getBookResponseList = bookEntities.stream()
+                .map(bookEntity -> GetBookResponse.builder()
+                        .id(bookEntity.getId())
+                        .title(bookEntity.getTitle())
+                        .quantity(bookEntity.getQuantity())
+                        .authors(bookEntity.getAuthors())
+                        .description(bookEntity.getDescription())
+                        .genres(bookEntity.getGenres())
+                        .build())
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(new GetBooksResponse(getBookResponseList), HttpStatus.OK);
+    }
 }
