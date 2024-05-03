@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -31,6 +32,7 @@ public class AuthService {
      * @param request запрос на аутентификацию
      * @return ответ с JWT токеном
      */
+    @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -52,6 +54,7 @@ public class AuthService {
      * @param request запрос на регистрацию
      * @return ответ с JWT токеном
      */
+    @Transactional
     public AuthenticationResponse register(RegisterRequest request) {
         Optional<UserEntity> userRepositoryByEmail = userRepository.findByLogin(request.getLogin());
 
