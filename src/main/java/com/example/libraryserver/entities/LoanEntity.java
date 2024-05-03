@@ -29,11 +29,11 @@ public class LoanEntity {
     @Version
     private Long version;
     private LocalDateTime loanDate;
-    private int status; // 1- книга на руках у юзера, 2- книга возвращена
+    private int status; // 1 - книга на руках у юзера, 2 - книга возвращена
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinColumn
-    //@JsonBackReference(value = "user")
+    //@JsonManagedReference(value = "loan-user reference")
     private UserEntity user;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)

@@ -15,6 +15,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -25,7 +26,7 @@ public class GenreService {
 
     private final GenreRepository genreRepository;
 
-
+    @Transactional
     public ResponseEntity<InfoResponse> createGenre(CreateGenreRequest createGenreRequest) {
         GenreEntity genreEntity = GenreEntity.builder()
                 .name(createGenreRequest.getName())
@@ -38,7 +39,7 @@ public class GenreService {
             throw new DatabaseConnectionException("Genre was not created due to problems connecting to the database");
         }
     }
-
+    @Transactional
     public GetGenreResponse getGenreByIdBrief(Long id) {
         GenreEntity genreEntity = genreRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Genre with id " + id + " not found"));
@@ -49,7 +50,7 @@ public class GenreService {
                 .build();
         return getGenreResponse;
     }
-
+    @Transactional
     public GetGenreResponse getGenreByIdFull(Long id) {
         GenreEntity genreEntity = genreRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Genre with id " + id + " not found"));
@@ -62,7 +63,7 @@ public class GenreService {
                 .build();
         return getGenreResponse;
     }
-
+    @Transactional
     public GetGenresResponse getAllGenresBrief() {
         List<GenreEntity> genreEntityList = genreRepository.findAll();
         List<GetGenreResponse> getGenreResponseList = genreEntityList.stream()
@@ -73,7 +74,7 @@ public class GenreService {
                 .toList();
         return new GetGenresResponse(getGenreResponseList);
     }
-
+    @Transactional
     public GetGenresResponse getAllGenresFull() {
         List<GenreEntity> genreEntityList = genreRepository.findAll();
         List<GetGenreResponse> getGenreResponseList = genreEntityList.stream()
@@ -86,7 +87,7 @@ public class GenreService {
                 .toList();
         return new GetGenresResponse(getGenreResponseList);
     }
-
+    @Transactional
     public ResponseEntity<InfoResponse> updateGenre(UpdateGenreRequest updateGenreRequest) {
         GenreEntity genreEntity = genreRepository.findById(updateGenreRequest.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Genre with id " + updateGenreRequest.getId() + " not found"));
@@ -101,7 +102,7 @@ public class GenreService {
         }
 
     }
-
+    @Transactional
     public ResponseEntity<InfoResponse> deleteGenre(Long id) {
         try {
             genreRepository.deleteById(id);

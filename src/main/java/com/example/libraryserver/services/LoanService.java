@@ -57,7 +57,7 @@ public class LoanService {
         }
         else throw new ResourceNotFoundException("Book " + book.getTitle() + " not available");
     }
-
+    @Transactional
     public GetLoanResponse getLoanById(Long id) {
         LoanEntity loanEntity = loanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan with id " + id + " not found"));
@@ -70,25 +70,7 @@ public class LoanService {
                 .build();
         return getLoanResponse;
     }
-
-    public GetLoansResponse getLoansByUser(Long userId) {
-        Optional<UserEntity> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            List<LoanEntity> loanEntityList = user.get().getLoans();
-            List<GetLoanResponse> getLoanResponseList = loanEntityList.stream()
-                    .map(loanEntity -> GetLoanResponse.builder()
-                            .id(loanEntity.getId())
-                            .user(user.get())
-                            .status(loanEntity.getStatus())
-                            .book(loanEntity.getBook())
-                            .loanDate(loanEntity.getLoanDate())
-                            .build()
-
-                    ).toList();
-            return new GetLoansResponse(getLoanResponseList);
-        } else throw new ResourceNotFoundException("User with id " + userId + " not found");
-    }
-
+    @Transactional
     public ResponseEntity<InfoResponse> updateLoanStatus(UpdateLoanStatusRequest updateLoanStatusRequest) {
         LoanEntity loanEntity = loanRepository.findById(updateLoanStatusRequest.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Loan with id " + updateLoanStatusRequest.getId() + " not found"));
@@ -107,5 +89,24 @@ public class LoanService {
             //return new InfoResponse("Loan has been updated" + loanEntity);
         } else throw new StatusConflictException("Invalid status");
     }
+    @Transactional
+    public ResponseEntity getAllLoans() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserEntity user = (userRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found " + authentication.getName())));
+        List<LoanEntity> loanEntityList = user.getLoans();
+        GetLoansResponse getLoansResponse = GetLoansResponse.builder()
+                .loans(loanEntityList.stream()
+                        .map(loanEntity -> GetLoanResponse.builder()
+                                .id(loanEntity.getId())
+                                .book(loanEntity.getBook())
+                                //.user(loanEntity.getUser())
+                                .status(loanEntity.getStatus())
+                                .loanDate(loanEntity.getLoanDate())
+                                .build())
+                        .toList())
+                .build();
 
+        return new ResponseEntity<>(getLoansResponse, HttpStatus.OK);
+    }
 }

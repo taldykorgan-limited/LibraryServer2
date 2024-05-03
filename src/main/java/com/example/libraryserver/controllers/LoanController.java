@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class LoanController {
 
     private final LoanService loanService;
+
     @Transactional
     @PostMapping("/create")
     public ResponseEntity<InfoResponse> createLoan(@RequestBody CreateLoanRequest createLoanRequest) {
@@ -29,6 +30,10 @@ public class LoanController {
         return loanService.getLoanById(id);
     }
 
+    @GetMapping("/get")
+    public ResponseEntity<?> getLoans() {
+        return loanService.getAllLoans();
+    }
     @PatchMapping("/update")
     public ResponseEntity<InfoResponse> updateLoanStatus(@RequestBody UpdateLoanStatusRequest request) {
         return loanService.updateLoanStatus(request);

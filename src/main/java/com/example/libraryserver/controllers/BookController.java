@@ -52,6 +52,7 @@ public class BookController {
     public ResponseEntity<?> getAmount(){
         return bookService.getAmount();
     }
+
     @GetMapping("/getByTitle")
     public ResponseEntity<?> getByTitle(@RequestParam String title){
         return bookService.getByTitle(title);
