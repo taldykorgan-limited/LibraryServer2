@@ -1,0 +1,39 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Self-hosted" type="docker-deploy" factoryName="docker-image" editBeforeRun="true" singleton="false" server-name="RemoteMachine">
+    <deployment type="docker-image">
+      <settings>
+        <option name="imageTag" value="myoung34/github-runner:latest" />
+        <option name="containerName" value="runner" />
+        <option name="envVars">
+          <list>
+            <DockerEnvVarImpl>
+              <option name="name" value="REPO_URL" />
+              <option name="value" value="https://github.com/yobaNGE/LibraryServer" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="RUNNER_TOKEN" />
+              <option name="value" value="AS32UNT5CTVB76OCXK25H5LGGQ7JG" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="RUNNER_NAME_PREFIX" />
+              <option name="value" value="docker" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="LABELS" />
+              <option name="value" value="docker" />
+            </DockerEnvVarImpl>
+          </list>
+        </option>
+        <option name="volumeBindings">
+          <list>
+            <DockerVolumeBindingImpl>
+              <option name="containerPath" value="/_work" />
+              <option name="hostPath" value="runner" />
+            </DockerVolumeBindingImpl>
+          </list>
+        </option>
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>
