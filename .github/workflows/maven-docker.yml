@@ -1,11 +1,11 @@
-name: Java CI with Maven and Docker
+name: Maven build, Docker deploy
 
 on:
   push:
     branches: [ "master" ]
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -27,7 +27,12 @@ jobs:
         
     - name: Push Docker image
       run: docker push docker.io/yobange/spring-server:latest
-      
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
     - name: Deploy to server
       uses: appleboy/ssh-action@master
       with:
