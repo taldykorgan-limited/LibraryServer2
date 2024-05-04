@@ -17,6 +17,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class AuthorService {
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
 
-
+    @Transactional
     public ResponseEntity<InfoResponse> createAuthor(CreateAuthorRequest createAuthorRequest) {
         try {
             AuthorEntity authorEntity = AuthorEntity.builder()
@@ -41,7 +42,7 @@ public class AuthorService {
             throw new DatabaseConnectionException("Author was not created due to problems connecting to the database");
         }
     }
-
+    @Transactional
     public GetAuthorResponse getAuthorById(Long id) {
         AuthorEntity authorEntity = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Author with id " + id + " not found"));
@@ -54,7 +55,7 @@ public class AuthorService {
                 .build();
         return getAuthorResponse;
     }
-
+    @Transactional
     public GetAuthorsResponse getAllAuthors() {
         List<AuthorEntity> authors = authorRepository.findAll();
         List<GetAuthorResponse> getAuthorResponseList = authors.stream()
@@ -68,7 +69,7 @@ public class AuthorService {
                 .toList();
         return new GetAuthorsResponse(getAuthorResponseList);
     }
-
+    @Transactional
     public ResponseEntity<InfoResponse> updateAuthor(UpdateAuthorRequest updateAuthorRequest) {
         AuthorEntity authorEntity = authorRepository.findById(updateAuthorRequest.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Author with id " + updateAuthorRequest.getId() + " not found"));
@@ -88,7 +89,7 @@ public class AuthorService {
             throw new DatabaseConnectionException("Author was not updated due to problems connecting to the database");
         }
     }
-
+    @Transactional
     public ResponseEntity<InfoResponse> deleteAuthor(Long id) {
         try {
             AuthorEntity author = authorRepository.findById(id)

@@ -30,7 +30,7 @@ public class BookController {
     }
 
     @GetMapping("/get/{id}")
-    public GetBookResponse getBookById(@PathVariable("id") Long id){
+    public ResponseEntity<?> getBookById(@PathVariable("id") Long id){
         return bookService.getBookById(id);
     }
 
@@ -52,6 +52,7 @@ public class BookController {
     public ResponseEntity<?> getAmount(){
         return bookService.getAmount();
     }
+
     @GetMapping("/getByTitle")
     public ResponseEntity<?> getByTitle(@RequestParam String title){
         return bookService.getByTitle(title);

@@ -1,10 +1,9 @@
 package com.example.libraryserver.services;
 
-import com.example.libraryserver.entities.AuthorEntity;
 import com.example.libraryserver.entities.BookEntity;
-import com.example.libraryserver.entities.GenreEntity;
 import com.example.libraryserver.exceptions.DatabaseConnectionException;
 import com.example.libraryserver.exceptions.ResourceNotFoundException;
+import com.example.libraryserver.mappers.BookMapper;
 import com.example.libraryserver.repositories.AuthorRepository;
 import com.example.libraryserver.repositories.BookRepository;
 import com.example.libraryserver.repositories.GenreRepository;
@@ -20,10 +19,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import com.example.libraryserver.dtos.BookDTO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +31,8 @@ public class BookService {
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
     private final AuthorRepository authorRepository;
-
+    private final BookMapper bookMapper;
+    @Transactional
     public ResponseEntity<InfoResponse> createBook(CreateBookRequest createBookRequest) {
         try {
             BookEntity bookEntity = BookEntity.builder()
@@ -48,22 +48,25 @@ public class BookService {
             throw new DatabaseConnectionException("Genre was not created due to problems connecting to the database");
         }
     }
-
-    public GetBookResponse getBookById(Long id) {
+    @Transactional
+    public ResponseEntity<?> getBookById(Long id) {
         BookEntity bookEntity = bookRepository.findBookEntityById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book with id " + id + " not found"));
+        BookDTO bookDTO = bookMapper.bookEntityToBookDTO(bookEntity);
 
-        GetBookResponse getBookResponse = GetBookResponse.builder()
-                .id(bookEntity.getId())
-                .title(bookEntity.getTitle())
-                .quantity(bookEntity.getQuantity())
-                .authors(bookEntity.getAuthors())
-                .description(bookEntity.getDescription())
-                .genres(bookEntity.getGenres())
-                .build();
-        return getBookResponse;
+
+//        GetBookResponse getBookResponse = GetBookResponse.builder()
+//                .id(bookEntity.getId())
+//                .title(bookEntity.getTitle())
+//                .quantity(bookEntity.getQuantity())
+//                .authors(bookEntity.getAuthors())
+//                .description(bookEntity.getDescription())
+//                .genres(bookEntity.getGenres())
+//                .build();
+
+        return new ResponseEntity<>(bookDTO, HttpStatus.OK);
     }
-
+    @Transactional
     public GetBooksResponse getAllBooks() {
         List<BookEntity> bookEntityList = bookRepository.findAll();
         List<GetBookResponse> getBookResponseList = bookEntityList.stream()
@@ -78,7 +81,7 @@ public class BookService {
                 .toList();
         return new GetBooksResponse(getBookResponseList);
     }
-
+    @Transactional
     public ResponseEntity<InfoResponse> updateBook(UpdateBookRequest updateBookRequest) {
         BookEntity bookEntity = bookRepository.findBookEntityById(updateBookRequest.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book with id " + updateBookRequest.getId() + " not found"));
@@ -104,7 +107,7 @@ public class BookService {
             throw new DatabaseConnectionException("Book was not updated due to problems connecting to the database");
         }
     }
-
+    @Transactional
     public ResponseEntity<InfoResponse> deleteBook(Long id) {
         try {
             bookRepository.deleteById(id);
@@ -114,7 +117,7 @@ public class BookService {
         }
     }
 
-
+    @Transactional
     public ResponseEntity<?> getPage(int page, int size) {
         Long startId = (long) size * (page - 1L) + 1L;
         Long endId = startId + size - 1L;
@@ -132,12 +135,12 @@ public class BookService {
 
         return new ResponseEntity<>(new GetBooksResponse(getBookResponseList), HttpStatus.OK);
     }
-
+    @Transactional
     public ResponseEntity<?> getAmount() {
         Long amount = bookRepository.count();
         return new ResponseEntity<GetBooksAmountResponse>(new GetBooksAmountResponse(amount), HttpStatus.OK);
     }
-
+    @Transactional
     public ResponseEntity<?> getByTitle(String title) {
         List<BookEntity> bookEntities = bookRepository.findBookEntitiesByTitleContaining(title);
         // TODO: reconsider about using this
