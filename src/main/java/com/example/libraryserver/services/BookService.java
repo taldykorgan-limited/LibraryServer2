@@ -52,9 +52,7 @@ public class BookService {
     public ResponseEntity<?> getBookById(Long id) {
         BookEntity bookEntity = bookRepository.findBookEntityById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book with id " + id + " not found"));
-        BookDTO bookDTO = bookMapper.bookEntityToBookDTO(bookEntity);
-
-
+        BookDTO bookDTO = bookMapper.bookEntityToBookDTOWithoutBookAndUserInLoans(bookEntity);
 //        GetBookResponse getBookResponse = GetBookResponse.builder()
 //                .id(bookEntity.getId())
 //                .title(bookEntity.getTitle())
@@ -63,7 +61,6 @@ public class BookService {
 //                .description(bookEntity.getDescription())
 //                .genres(bookEntity.getGenres())
 //                .build();
-
         return new ResponseEntity<>(bookDTO, HttpStatus.OK);
     }
     @Transactional
