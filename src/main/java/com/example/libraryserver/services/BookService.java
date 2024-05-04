@@ -32,6 +32,7 @@ public class BookService {
     private final GenreRepository genreRepository;
     private final AuthorRepository authorRepository;
     private final BookMapper bookMapper;
+
     @Transactional
     public ResponseEntity<InfoResponse> createBook(CreateBookRequest createBookRequest) {
         try {
@@ -48,21 +49,15 @@ public class BookService {
             throw new DatabaseConnectionException("Genre was not created due to problems connecting to the database");
         }
     }
+
     @Transactional
-    public ResponseEntity<?> getBookById(Long id) {
+    public ResponseEntity<?> getBookByIdFull(Long id) {
         BookEntity bookEntity = bookRepository.findBookEntityById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book with id " + id + " not found"));
         BookDTO bookDTO = bookMapper.bookEntityToBookDTOWithoutBookAndUserInLoans(bookEntity);
-//        GetBookResponse getBookResponse = GetBookResponse.builder()
-//                .id(bookEntity.getId())
-//                .title(bookEntity.getTitle())
-//                .quantity(bookEntity.getQuantity())
-//                .authors(bookEntity.getAuthors())
-//                .description(bookEntity.getDescription())
-//                .genres(bookEntity.getGenres())
-//                .build();
         return new ResponseEntity<>(bookDTO, HttpStatus.OK);
     }
+
     @Transactional
     public GetBooksResponse getAllBooks() {
         List<BookEntity> bookEntityList = bookRepository.findAll();
@@ -78,6 +73,7 @@ public class BookService {
                 .toList();
         return new GetBooksResponse(getBookResponseList);
     }
+
     @Transactional
     public ResponseEntity<InfoResponse> updateBook(UpdateBookRequest updateBookRequest) {
         BookEntity bookEntity = bookRepository.findBookEntityById(updateBookRequest.getId())
@@ -104,6 +100,7 @@ public class BookService {
             throw new DatabaseConnectionException("Book was not updated due to problems connecting to the database");
         }
     }
+
     @Transactional
     public ResponseEntity<InfoResponse> deleteBook(Long id) {
         try {
@@ -118,7 +115,7 @@ public class BookService {
     public ResponseEntity<?> getPage(int page, int size) {
         Long startId = (long) size * (page - 1L) + 1L;
         Long endId = startId + size - 1L;
-        List<BookEntity> bookEntities = bookRepository.findAllByIdBetween(startId,endId);
+        List<BookEntity> bookEntities = bookRepository.findAllByIdBetween(startId, endId);
         List<GetBookResponse> getBookResponseList = bookEntities.stream()
                 .map(bookEntity -> GetBookResponse.builder()
                         .id(bookEntity.getId())
@@ -132,11 +129,13 @@ public class BookService {
 
         return new ResponseEntity<>(new GetBooksResponse(getBookResponseList), HttpStatus.OK);
     }
+
     @Transactional
     public ResponseEntity<?> getAmount() {
         Long amount = bookRepository.count();
         return new ResponseEntity<GetBooksAmountResponse>(new GetBooksAmountResponse(amount), HttpStatus.OK);
     }
+
     @Transactional
     public ResponseEntity<?> getByTitle(String title) {
         List<BookEntity> bookEntities = bookRepository.findBookEntitiesByTitleContaining(title);
@@ -152,5 +151,13 @@ public class BookService {
                         .build())
                 .collect(Collectors.toList());
         return new ResponseEntity<>(new GetBooksResponse(getBookResponseList), HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<?> getBookByIdShort(Long id) {
+        BookEntity bookEntity = bookRepository.findBookEntityById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book with id " + id + " not found"));
+        BookDTO bookDTO = bookMapper.bookEntityToBookDTOWithoutAuthorsLoansGenres(bookEntity);
+        return new ResponseEntity<>(bookDTO, HttpStatus.OK);
     }
 }
